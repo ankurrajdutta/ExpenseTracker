@@ -5,8 +5,6 @@ const bodyParser = require('body-parser');
 const sequelize=require('./utils/database')
 const user=require('./model/user')
 
-console.log(__dirname)
-
 
 app.use(express.static(path.join(__dirname, '/public')))
 app.use(express.json());
@@ -17,7 +15,7 @@ app.use('/',userRoutes)
 
 
 
-sequelize.sync({alter:true})
+sequelize.sync()
 .then(res=>app.listen(3000))
 .catch(err=>console.log(err))
 
