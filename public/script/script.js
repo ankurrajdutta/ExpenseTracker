@@ -17,7 +17,7 @@ document.getElementsByClassName('btn')[0].addEventListener('click',(e)=>{
         console.log(res)
         if(res.status==200)
         alert('User added successfully');
-       
+        window.location.href='./login/login.html';
         document.getElementById('exampleInputName1').value=''
         document.getElementById('exampleInputEmail1').value='';
         document.getElementById('exampleInputPassword1').value='';  

@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const sequelize=require('./utils/database')
 const user=require('./model/user')
 
+console.log(__dirname)
+
+
 app.use(express.static(path.join(__dirname, '/public')))
 app.use(express.json());
 
