@@ -14,6 +14,11 @@ document.getElementsByClassName('btn')[0].addEventListener('click',(e)=>{
       if(result.status==200){
         alert(`${result.data.message}`);
       }
+  
+      document.getElementById('exampleInputEmail1').value='';
+      document.getElementById('exampleInputPassword1').value='';  
+
+      window.location.href='../expense/expense.html'
       
    }).catch(err=>{
     console.log(err)
