@@ -11,7 +11,9 @@ document.getElementsByClassName('btn')[0].addEventListener('click',(e)=>{
         category,
         money
     }
-    axios.post('http://localhost:3000/expense/AddExpense',obj).then(result=>{
+    console.log(obj)
+    const token=localStorage.getItem('token')
+    axios.post('http://localhost:3000/expense/AddExpense',obj,{headers:{"Authorization":token}}).then(result=>{
         console.log('user added')
         console.log(result)
         if(result.status==200)
@@ -32,8 +34,9 @@ document.getElementsByClassName('btn')[0].addEventListener('click',(e)=>{
 
 
 window.addEventListener('DOMContentLoaded',()=>{
+    const token=localStorage.getItem('token')
     
-    axios.get('http://localhost:3000/expense/getExpense').then(data=>{
+    axios.get('http://localhost:3000/expense/getExpense',{headers:{"Authorization":token}}).then(data=>{
         console.log(data);
         var temp=data.data;
         temp.forEach(ele=>{
@@ -68,6 +71,7 @@ function showExpenseinUI(obj){
 }
 
 function deleteExpense(id){
+    
      axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`).then(result=>{
          removeExpenseinUI(id)
      }).catch(err=>console.log(err))

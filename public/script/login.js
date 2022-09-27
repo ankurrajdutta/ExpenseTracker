@@ -17,6 +17,7 @@ document.getElementsByClassName('btn')[0].addEventListener('click',(e)=>{
   
       document.getElementById('exampleInputEmail1').value='';
       document.getElementById('exampleInputPassword1').value='';  
+      localStorage.setItem('token',result.data.token)
 
       window.location.href='../expense/expense.html'
       

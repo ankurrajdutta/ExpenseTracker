@@ -1,6 +1,7 @@
 const user=require('../model/user');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+var jwt = require('jsonwebtoken');
 
 exports.addUser=(req,res,next)=>{
    const userName=req.body.userName;
@@ -20,6 +21,10 @@ exports.addUser=(req,res,next)=>{
   
 }
 
+function generateWebToken(id){
+   return jwt.sign({ id: id }, 'shhhhh');
+}
+
 exports.loginUser=(req,res,next)=>{
    const userMail=req.body.userMail;
    const userPassword=req.body.userPassword;
@@ -30,7 +35,9 @@ exports.loginUser=(req,res,next)=>{
    }).then(result=>{
          bcrypt.compare(userPassword, result.password).then(function(Cresult) {
               if(Cresult==true){
-               res.status(200).json({success:true,message:'User Log in Successful'})
+               console.log(result.dataValues);
+             
+               res.status(200).json({success:true,message:'User Log in Successful',token:generateWebToken(result.dataValues.id)})
               }else
               {
                  res.status(401).json({success:false,message:'User Not Authorized'})

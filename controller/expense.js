@@ -1,14 +1,22 @@
-const Expense=require('../model/expense')
+const Expense=require('../model/expense');
+const User=require('../model/user')
 
 exports.addExpense=(req,res,next)=>{
    const inputDescription=req.body.description;
    const inputCategory=req.body.category;
    const inputPrice=req.body.money;
-
-   Expense.create({
-       money:inputPrice,
-       description:inputDescription,
-       category:inputCategory
+   console.log(inputCategory,inputDescription,inputPrice)
+   console.log(req.user.dataValues.id);
+   console.log('in add Expense controller')
+   console.log(req.user)
+   console.log('line12')
+   User.findByPk(req.user.dataValues.id).then(user=>{
+       console.log(user)
+        return user.createExpense({
+            money:inputPrice,
+            description:inputDescription,
+            category:inputCategory
+        })
    })
    .then(result=>{
        const obj=result.dataValues;
@@ -19,12 +27,15 @@ exports.addExpense=(req,res,next)=>{
 }
 
 exports.getExpense=(req,res,next)=>{
+    console.log(req.user)
+    console.log('in getExpense')
+    console.log(req.user.dataValues.id)
     Expense.findAll({
-        attributes:['id','money','description','category']
+        where: {UserId:req.user.dataValues.id}
     }).then(data=>{
-        res.status(200).json(data)
+        return res.status(200).json(data)
     }).catch(err=>{
-        res.status(400).json({success:false,message:'something went wrong'})
+        return res.status(400).json({success:false,message:'something went wrong'})
     })
 }
 

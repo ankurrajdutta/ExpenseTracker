@@ -4,6 +4,7 @@ const path=require('path');
 const bodyParser = require('body-parser');
 const sequelize=require('./utils/database')
 const user=require('./model/user');
+const expense=require('./model/expense')
 const expenseRoutes=require('./router/Expense')
 
 
@@ -17,8 +18,11 @@ app.use('/expense',expenseRoutes);
 
 
 
+user.hasMany(expense);
+expense.belongsTo(user)
 
-sequelize.sync({alter:true})
+
+sequelize.sync()
 .then(res=>app.listen(3000))
 .catch(err=>console.log(err))
 

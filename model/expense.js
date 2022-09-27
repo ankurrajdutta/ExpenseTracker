@@ -5,14 +5,15 @@ const sequelize=require('../utils/database');
 const expense=sequelize.define('Expense',{
     id:{
         type:Sequelize.INTEGER,
-        primaryKey:true
+        primaryKey:true,
+        autoIncrement:true
     },
     money:{
         type:Sequelize.INTEGER,
         allowNull:false
     },
     description:{
-        type:Sequelize.TEXT,
+        type:Sequelize.STRING,
         allowNull:false
     },
     category:{
