@@ -1,3 +1,11 @@
 h1{
     font-family: 'Happy Monkey', cursive;
 }
+#btn-premium{
+    display: block;
+    margin-left: auto;
+}
+.dark-theme{
+    background-color:#383838;
+    color: white;
+}

@@ -28,12 +28,17 @@ exports.addExpense=(req,res,next)=>{
 
 exports.getExpense=(req,res,next)=>{
     console.log(req.user)
-    console.log('in getExpense')
-    console.log(req.user.dataValues.id)
     Expense.findAll({
         where: {UserId:req.user.dataValues.id}
     }).then(data=>{
-        return res.status(200).json(data)
+        User.findByPk(req.user.dataValues.id).then(user=>{
+            console.log(user);
+            if(user.dataValues.isPremiumUser==true){
+                return res.status(200).json({success:true,isPremiumUser:true,data})
+            }
+            return res.status(200).json({success:true,isPremiumUser:false,data})
+        })
+        
     }).catch(err=>{
         return res.status(400).json({success:false,message:'something went wrong'})
     })

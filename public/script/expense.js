@@ -1,6 +1,8 @@
 const expenseList=document.getElementById('expense-list');
+const mainContent=document.getElementById('main-content')
 
-document.getElementsByClassName('btn')[0].addEventListener('click',(e)=>{
+
+document.getElementsByClassName('btn')[1].addEventListener('click',(e)=>{
     e.preventDefault()
     const description=document.getElementById('inputDescription').value;
     const category=document.getElementById('inputCategory').value;
@@ -38,7 +40,11 @@ window.addEventListener('DOMContentLoaded',()=>{
     
     axios.get('http://localhost:3000/expense/getExpense',{headers:{"Authorization":token}}).then(data=>{
         console.log(data);
-        var temp=data.data;
+        var temp=data.data.data;
+        console.log('44')
+        if(data.data.isPremiumUser==true){
+            mainContent.classList.add('dark-theme')
+        }
         temp.forEach(ele=>{
             showExpenseinUI(ele)
         })
@@ -82,3 +88,47 @@ function removeExpenseinUI(id){
     document.getElementById(expenseId).remove();
 
 }
+
+document.getElementById('btn-premium').addEventListener('click',async function(e){
+    console.log('clicked');
+    const token=localStorage.getItem('token');
+    console.log('89')
+    const response  = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: {"Authorization" : token} });
+    console.log(response);
+    console.log('92')
+    var options =
+    {
+     "key": response.data.key_id, // Enter the Key ID generated from the Dashboard
+     "name": "Test Company",
+     "order_id": response.data.order.id, // For one time payment
+     "theme": {
+      "color": "#3399cc"
+     },
+     // This handler function will handle the success payment
+     "handler": function (response) {
+         console.log(response);
+         axios.post('http://localhost:3000/purchase/updatetransactionstatus',{
+             order_id: options.order_id,
+             payment_id: response.razorpay_payment_id,
+         }, { headers: {"Authorization" : token} }).then(() => {
+             alert('You are a Premium User Now');
+             window.location.href='../login/login.html';
+         }).catch(() => {
+             alert('Something went wrong. Try Again!!!')
+         })
+     },
+  };
+  const rzp1 = new Razorpay(options);
+  rzp1.open();
+  e.preventDefault();
+
+  rzp1.on('payment.failed', function (response){
+  alert(response.error.code);
+  alert(response.error.description);
+  alert(response.error.source);
+  alert(response.error.step);
+  alert(response.error.reason);
+  alert(response.error.metadata.order_id);
+  alert(response.error.metadata.payment_id);
+ });
+})
