@@ -7,7 +7,8 @@ const user=require('./model/user');
 const expense=require('./model/expense')
 const order=require('./model/order')
 const expenseRoutes=require('./router/Expense')
-const purchaseRoutes=require('./router/purchase')
+const purchaseRoutes=require('./router/purchase');
+const forgotPasswordRoutes=require('./router/forgotPassword')
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -19,6 +20,7 @@ const userRoutes=require('./router/user')
 app.use('/',userRoutes)
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes);
+app.use('/password',forgotPasswordRoutes)
 
 
 
