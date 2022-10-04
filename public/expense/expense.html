@@ -37,8 +37,9 @@
                     </div>
                   </div>
                 <button type="submit" class="btn btn-primary">Add Expense</button>
-                <hr>
+            
                 <div id="expense-list">
+                  
                   <!--                                 
                     <div class="d-flex justify-content-between border-bottom border-dark p-2"> 
                       <div class="p-2">Flex item 1</div>
@@ -51,6 +52,53 @@
                
               </form>
         </div>
+        <div class="w-50 p-3 border hidden" id="leader-board">
+          <h1 class="text-center">Leader Board</h1>
+          <form>
+                                              
+                    <!-- <div class="d-flex justify-content-between border-bottom border-dark p-2"> 
+                      <div class="p-2">Flex item 1</div>
+                      <div class="p-2">Flex item 2</div>
+                      <div class="p-2">Flex item 3</div>
+                      <button type="button" class="btn btn-danger">Remove</button>
+                    </div>    -->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">Userid</th>
+                          <th scope="col">User Name</th>
+                          <th scope="col">Total Expense</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbody-table">
+                        <!-- <tr>
+                          <th scope="row">1</th>
+                          <td>Mark</td>
+                          <td>Otto <button type="button" class="btn btn-primary show-expense" >Show Expense</button>
+                          </td>
+                          
+                        </tr> -->
+                        
+                      </tbody>
+                    </table>
+           
+          </form>
+        </div>
+
+
+
+
+
+    </div>
+    <div class="text-center w-50 mx-auto border border-primary hidden" id="expense-board">
+               
+                    <!-- <div class="d-flex justify-content-between border-bottom border-dark p-2"> 
+                      <div class="p-2">Flex item 1</div>
+                      <div class="p-2">Flex item 2</div>
+                      <div class="p-2">Flex item 3</div>
+                      <button type="button" class="btn btn-danger">Remove</button>
+                      
+                    </div> -->
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

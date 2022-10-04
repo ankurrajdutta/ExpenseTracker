@@ -7,7 +7,6 @@ const authenticate=(req,res,next)=>{
     const user=jwt.verify(token,'shhhhh');
     console.log(user)
     User.findByPk(user.id).then(data=>{
-        console.log(".,")
         req.user=data;
         next();
     }).catch(err=>{

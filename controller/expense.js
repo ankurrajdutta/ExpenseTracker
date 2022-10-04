@@ -2,6 +2,7 @@ const Expense=require('../model/expense');
 const User=require('../model/user')
 
 exports.addExpense=(req,res,next)=>{
+   let userRes;
    const inputDescription=req.body.description;
    const inputCategory=req.body.category;
    const inputPrice=req.body.money;
@@ -11,8 +12,15 @@ exports.addExpense=(req,res,next)=>{
    console.log(req.user)
    console.log('line12')
    User.findByPk(req.user.dataValues.id).then(user=>{
+       userRes=user;
        console.log(user)
-        return user.createExpense({
+       console.log('17');
+     
+       return user.update({totalExpense:user.totalExpense+ +inputPrice})
+       
+   }).then(data=>{
+       console.log('21')
+        return userRes.createExpense({
             money:inputPrice,
             description:inputDescription,
             category:inputCategory
@@ -54,4 +62,28 @@ exports.deleteExpense=(req,res,next)=>{
         res.status(400).json({success:false,message:'something went wrong'})
     })
 
+}
+
+exports.getAllExpense=(req,res,next)=>{
+    User.findAll({attributes:['id','name','totalExpense']}).then(data=>{
+        res.status(200).json(data)
+    }).catch(err=>{
+        res.status(400).json({success:false,message:"something went wrong"})
+    })
+}
+
+exports.showExpense=(req,res,next)=>{
+    let userId=req.params.id;
+    console.log('77')
+    User.findAll({where:{
+        id:userId
+    }}).then(user=>{
+        let data;
+        console.log(user)
+        data=user[0].getExpenses().then(data=>{
+            res.status(200).json({success:true,messagee:"got data successfully",data})
+        })
+    }).catch(err=>{
+        res.status(400).json({success:false,message:"something went wrong",err})
+    })
 }

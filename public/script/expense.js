@@ -41,9 +41,23 @@ window.addEventListener('DOMContentLoaded',()=>{
     axios.get('http://localhost:3000/expense/getExpense',{headers:{"Authorization":token}}).then(data=>{
         console.log(data);
         var temp=data.data.data;
-        console.log('44')
         if(data.data.isPremiumUser==true){
-            mainContent.classList.add('dark-theme')
+            mainContent.classList.add('dark-theme');
+            document.getElementById('leader-board').classList.remove('hidden')
+            axios.get('http://localhost:3000/expense/getAllExpense').then(data=>{
+        
+                console.log(data)
+                let userList=data.data;
+                userList.sort(function(a,b){
+                    return a.totalExpense-b.totalExpense
+                })
+                userList.forEach(ele=>{
+                  
+                    showUserinLeaderBoard(ele);
+                })
+
+            }).catch(err=>console.log(err))
+            
         }
         temp.forEach(ele=>{
             showExpenseinUI(ele)
@@ -54,8 +68,6 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 function showExpenseinUI(obj){
-        console.log('showExpenseinUI inside')
-        console.log(obj);
         var description=obj.description;
         var price=obj.money;
         var category=obj.category;
@@ -132,3 +144,41 @@ document.getElementById('btn-premium').addEventListener('click',async function(e
   alert(response.error.metadata.payment_id);
  });
 })
+
+
+function showUserinLeaderBoard(obj){
+  
+    let tbodyTable=document.getElementById('tbody-table');
+    var leaderBoardtemp=document.createElement('tr');
+    leaderBoardtemp.innerHTML=`<th scope="row">${obj.id}</th>
+                <td>${obj.name}</td>
+                <td>${obj.totalExpense} 
+                <button type="button" class="btn btn-primary show-expense" onclick='showExpense(${obj.id})'>Show Expense</button>
+                </td>`;
+    tbodyTable.appendChild(leaderBoardtemp);
+}
+
+function showExpense(id){
+    document.getElementById('expense-board').classList.remove('hidden')
+    document.getElementById('expense-board').innerHTML=''
+    document.getElementById('expense-board').innerHTML='<h1>Expense Board</h1>'
+    axios.get(`http://localhost:3000/expense/showExpense/${id}`).then(data=>{
+        let obj=data.data.data;
+        obj.forEach(ele=>{
+            showExpenseRow(ele)
+        })
+        
+    }).catch(err=>console.log(err))
+}
+
+function showExpenseRow(obj){
+    let tempDiv=document.createElement('div');
+        tempDiv.setAttribute('class','d-flex justify-content-between border-bottom border-dark p-2');
+        tempDiv.innerHTML=`
+        <div class="p-2">${obj.description}</div>
+        <div class="p-2">${obj.category}</div>
+        <div class="p-2">${obj.money}</div>
+         </div>`
+    document.getElementById('expense-board').appendChild(tempDiv)
+
+}

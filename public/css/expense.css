@@ -9,3 +9,10 @@ h1{
     background-color:#383838;
     color: white;
 }
+.hidden{
+    display: none;
+}
+.show-expense{
+    position: relative;
+    left: 100px;
+}
