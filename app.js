@@ -5,10 +5,12 @@ const bodyParser = require('body-parser');
 const sequelize=require('./utils/database')
 const user=require('./model/user');
 const expense=require('./model/expense')
-const order=require('./model/order')
+const order=require('./model/order');
+const forgotPasswordRequest=require('./model/forgotPasswordRequest')
 const expenseRoutes=require('./router/Expense')
 const purchaseRoutes=require('./router/purchase');
-const forgotPasswordRoutes=require('./router/forgotPassword')
+const forgotPasswordRoutes=require('./router/forgotPassword');
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -31,6 +33,9 @@ expense.belongsTo(user);
 user.hasMany(order);
 order.belongsTo(user)
 
+
+user.hasMany(forgotPasswordRequest);
+forgotPasswordRequest.belongsTo(user)
 
 sequelize.sync()
 .then(res=>app.listen(3000))
