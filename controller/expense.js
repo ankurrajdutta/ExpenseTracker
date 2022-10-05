@@ -8,18 +8,19 @@ exports.addExpense=(req,res,next)=>{
    const inputPrice=req.body.money;
    console.log(inputCategory,inputDescription,inputPrice)
    console.log(req.user.dataValues.id);
-   console.log('in add Expense controller')
+
    console.log(req.user)
-   console.log('line12')
+
    User.findByPk(req.user.dataValues.id).then(user=>{
        userRes=user;
        console.log(user)
+       
        console.log('17');
      
        return user.update({totalExpense:user.totalExpense+ +inputPrice})
        
    }).then(data=>{
-       console.log('21')
+    
         return userRes.createExpense({
             money:inputPrice,
             description:inputDescription,

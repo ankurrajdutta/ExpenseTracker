@@ -6,7 +6,9 @@ const sequelize=require('./utils/database')
 const user=require('./model/user');
 const expense=require('./model/expense')
 const order=require('./model/order');
-const forgotPasswordRequest=require('./model/forgotPasswordRequest')
+const ForgotPassword=require('./model/forgotPasswordRequest')
+
+
 const expenseRoutes=require('./router/Expense')
 const purchaseRoutes=require('./router/purchase');
 const forgotPasswordRoutes=require('./router/forgotPassword');
@@ -34,8 +36,8 @@ user.hasMany(order);
 order.belongsTo(user)
 
 
-user.hasMany(forgotPasswordRequest);
-forgotPasswordRequest.belongsTo(user)
+user.hasMany(ForgotPassword);
+ForgotPassword.belongsTo(user)
 
 sequelize.sync()
 .then(res=>app.listen(3000))
