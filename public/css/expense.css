@@ -16,3 +16,8 @@ h1{
     position: relative;
     left: 100px;
 }
+#downloadBtn{
+   
+    margin-top: 20px;
+    margin-left: auto;
+}

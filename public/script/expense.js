@@ -55,6 +55,8 @@ window.addEventListener('DOMContentLoaded',()=>{
                   
                     showUserinLeaderBoard(ele);
                 })
+                document.getElementById('downloadBtn').classList.remove('hidden');
+                document.getElementById('downloadBtn').style.display="block";
 
             }).catch(err=>console.log(err))
             
@@ -181,4 +183,9 @@ function showExpenseRow(obj){
          </div>`
     document.getElementById('expense-board').appendChild(tempDiv)
 
+}
+
+
+function downloadReport(){
+    console.log('download clicked')
 }
