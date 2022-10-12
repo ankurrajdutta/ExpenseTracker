@@ -7,6 +7,7 @@ const user=require('./model/user');
 const expense=require('./model/expense')
 const order=require('./model/order');
 const ForgotPassword=require('./model/forgotPasswordRequest')
+const FilesDownloaded=require('./model/filesDownloaded')
 
 
 const expenseRoutes=require('./router/Expense')
@@ -20,7 +21,8 @@ dotenv.config();
 app.use(express.static(path.join(__dirname, '/public')))
 app.use(express.json());
 
-const userRoutes=require('./router/user')
+const userRoutes=require('./router/user');
+const filesDownloaded = require('./model/filesDownloaded');
 app.use('/',userRoutes)
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes);
@@ -37,7 +39,11 @@ order.belongsTo(user)
 
 
 user.hasMany(ForgotPassword);
-ForgotPassword.belongsTo(user)
+ForgotPassword.belongsTo(user);
+
+
+user.hasMany(filesDownloaded);
+filesDownloaded.belongsTo(user)
 
 sequelize.sync()
 .then(res=>app.listen(3000))
