@@ -38,9 +38,9 @@ document.getElementsByClassName('btn')[1].addEventListener('click',(e)=>{
 window.addEventListener('DOMContentLoaded',()=>{
     const token=localStorage.getItem('token')
     
-    axios.get('http://localhost:3000/expense/getExpense',{headers:{"Authorization":token}}).then(data=>{
+    axios.get('http://localhost:3000/expense/getExpense?page=1',{headers:{"Authorization":token}}).then(data=>{
         console.log(data);
-        var temp=data.data.data;
+        var temp=data.data.expense;
         if(data.data.isPremiumUser==true){
             mainContent.classList.add('dark-theme');
             document.getElementById('leader-board').classList.remove('hidden')
@@ -62,11 +62,65 @@ window.addEventListener('DOMContentLoaded',()=>{
             
         }
         temp.forEach(ele=>{
-            showExpenseinUI(ele)
+            showExpenseinUI(ele);
         })
+        addPagination(data);
+       
     }).catch(err=>console.log(err))
 })
 
+function paginationFunc(pageNo){
+    let token=localStorage.getItem('token')
+    axios.get(`http://localhost:3000/expense/getExpense?page=${pageNo}`, {
+      headers: { Authorization: token },
+    }).then(data=>{
+        expenseList.innerHTML='';
+        let temp=data.data.expense;
+         temp.forEach((ele) => {
+           showExpenseinUI(ele);
+
+         });
+         document.getElementById("pagination").innerHTML='';
+         addPagination(data)
+
+    }).catch(err=>{
+        console.log(err)
+    });
+}
+
+function addPagination(data){
+     let pagination = document.getElementById("pagination");
+     let ulTemp = document.createElement("ul");
+     ulTemp.setAttribute("class", "pagination d-flex justify-content-center");
+
+     if (
+       data.data.pagination.currentPage !== 1 &&
+       data.data.pagination.previousPage !== 1
+     ) {
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${1})'>1</a></li>`;
+     }
+
+     if (data.data.pagination.hasPreviousPage) {
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.previousPage})'>Prev</a></li>`;
+     }
+
+     ulTemp.innerHTML += `
+        <li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.currentPage})'>${data.data.pagination.currentPage}</a></li>`;
+
+     if (data.data.pagination.hasNextPage) {
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.nextPage})'>Next</a></li>`;
+     }
+
+     if (
+       data.data.pagination.lastPage !== data.data.pagination.currentPage &&
+       data.data.pagination.nextPage !== data.data.pagination.lastPage
+     ) {
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.lastPage})'>Last</a></li>`;
+     }
+
+     pagination.appendChild(ulTemp);
+
+}
 
 
 function showExpenseinUI(obj){
