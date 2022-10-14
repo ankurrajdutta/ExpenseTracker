@@ -74,9 +74,6 @@ exports.addExpense = (req, res, next) => {
     .then((user) => {
       userRes = user;
       console.log(user);
-
-      console.log("17");
-
       return user.update({ totalExpense: user.totalExpense + +inputPrice });
     })
     .then((data) => {
@@ -102,49 +99,66 @@ exports.addExpense = (req, res, next) => {
 
 
 exports.getExpense = (req, res, next) => {
+  console.log('in getExpense')
   let page=req.query.page;
-  const ITEMS_PER_PAGE=2;
+  let ITEMS_PER_PAGE = +req.query.limit;
+  
+  // const ITEMS_PER_PAGE=2;
   console.log(req.user);
   let totalItems;
-  Expense.count({
-    where:{UserId: req.user.dataValues.id}
-  }).then(tItem=>{
-    totalItems=tItem;
-  })
+   Expense.count({
+     where: { UserId: req.user.dataValues.id },
+   }).then((tItem) => {
+     totalItems = tItem;
+     return Expense.findAll({
+       where: { UserId: req.user.dataValues.id },
+       offset: (page - 1) * ITEMS_PER_PAGE,
+       limit: ITEMS_PER_PAGE,
+     })
+       .then((data) => {
+         console.log("116");
+         console.log(data);
+         return User.findByPk(req.user.dataValues.id).then((user) => {
+           console.log(user);
+           if (user.dataValues.isPremiumUser == true) {
+             return res.status(200).json({
+               success: true,
+               isPremiumUser: true,
+               expense: data,
+               pagination: {
+                 currentPage: +page,
+                 hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+                 hasPreviousPage: page > 1,
+                 nextPage: +page + 1,
+                 previousPage: +page - 1,
+                 lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+               },
+             });
+           }
+           return res.status(200).json({
+             success: true,
+             isPremiumUser: false,
+             expense: data,
+             pagination: {
+               currentPage: +page,
+               hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+               hasPreviousPage: page > 1,
+               nextPage: +page + 1,
+               previousPage: +page - 1,
+               lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+             },
+           });
+         });
+       })
+       .catch((err) => {
+         console.log(err);
+         return res
+           .status(400)
+           .json({ success: false, message: "something went wrong" });
+       });
+   });
 
-  Expense.findAll({
-    where: { UserId: req.user.dataValues.id },
-    offset: (page - 1) * ITEMS_PER_PAGE,
-    limit: ITEMS_PER_PAGE,
-  })
-    .then((data) => {
-      User.findByPk(req.user.dataValues.id).then((user) => {
-        console.log(user);
-        if (user.dataValues.isPremiumUser == true) {
-          return res.status(200).json({
-            success: true,
-            isPremiumUser: true,
-            expense: data,
-            pagination: {
-              currentPage: +page,
-              hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-              hasPreviousPage: page > 1,
-              nextPage: +page + 1,
-              previousPage: +page - 1,
-              lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
-            }
-          });
-        }
-        return res
-          .status(200)
-          .json({ success: true, isPremiumUser: false, data });
-      });
-    })
-    .catch((err) => {
-      return res
-        .status(400)
-        .json({ success: false, message: "something went wrong" });
-    });
+  
 };
 
 exports.deleteExpense = (req, res, next) => {

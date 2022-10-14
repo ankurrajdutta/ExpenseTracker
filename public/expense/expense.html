@@ -37,6 +37,16 @@
                     </div>
                   </div>
                 <button type="submit" class="btn btn-primary">Add Expense</button>
+                <div id="limitMDiv">
+                  <select  id="limitM" >
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    
+                  </select>per page
+                </div>
+             
             
                 <div id="expense-list">
                   
@@ -62,6 +72,7 @@
 
               </div>
         </div>
+        <button class="btn btn-success mt-30 hidden" id="downloadBtn" onclick="downloadReport()">Download Report</button>
         <div class="w-50 p-3 border hidden" id="leader-board">
           <h1 class="text-center">Leader Board</h1>
           <form>
@@ -110,7 +121,7 @@
                       
                     </div> -->
     </div>
-    <button class="btn btn-success mt-30 hidden" id="downloadBtn" onclick="downloadReport()">Download Report</button>
+  
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../script/expense.js"></script>

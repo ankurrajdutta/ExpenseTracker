@@ -18,6 +18,10 @@ h1{
 }
 #downloadBtn{
    
-    margin-top: 20px;
-    margin-left: auto;
+   position: absolute;
+   right: 0;
+   top: 0;
+}
+#limitMDiv{
+    float: right
 }

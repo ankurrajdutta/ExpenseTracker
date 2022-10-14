@@ -37,16 +37,18 @@ document.getElementsByClassName('btn')[1].addEventListener('click',(e)=>{
 
 window.addEventListener('DOMContentLoaded',()=>{
     const token=localStorage.getItem('token')
-    
-    axios.get('http://localhost:3000/expense/getExpense?page=1',{headers:{"Authorization":token}}).then(data=>{
+   
+    axios.get('http://localhost:3000/expense/getExpense?page=1&limit=2',{headers:{"Authorization":token}}).then(data=>{
+      
         console.log(data);
         var temp=data.data.expense;
         if(data.data.isPremiumUser==true){
             mainContent.classList.add('dark-theme');
             document.getElementById('leader-board').classList.remove('hidden')
+            
             axios.get('http://localhost:3000/expense/getAllExpense').then(data=>{
         
-                console.log(data)
+                
                 let userList=data.data;
                 userList.sort(function(a,b){
                     return a.totalExpense-b.totalExpense
@@ -70,22 +72,27 @@ window.addEventListener('DOMContentLoaded',()=>{
 })
 
 function paginationFunc(pageNo){
-    let token=localStorage.getItem('token')
-    axios.get(`http://localhost:3000/expense/getExpense?page=${pageNo}`, {
-      headers: { Authorization: token },
-    }).then(data=>{
-        expenseList.innerHTML='';
-        let temp=data.data.expense;
-         temp.forEach((ele) => {
-           showExpenseinUI(ele);
-
-         });
-         document.getElementById("pagination").innerHTML='';
-         addPagination(data)
-
-    }).catch(err=>{
-        console.log(err)
-    });
+    let token=localStorage.getItem('token');
+    let ITEMS_PER_PAGE = document.getElementById("limitM").value;
+    axios
+      .get(
+        `http://localhost:3000/expense/getExpense?page=${pageNo}&limit=${ITEMS_PER_PAGE}`,
+        {
+          headers: { Authorization: token },
+        }
+      )
+      .then((data) => {
+        expenseList.innerHTML = "";
+        let temp = data.data.expense;
+        temp.forEach((ele) => {
+          showExpenseinUI(ele);
+        });
+        document.getElementById("pagination").innerHTML = "";
+        addPagination(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 }
 
 function addPagination(data){
@@ -119,6 +126,7 @@ function addPagination(data){
      }
 
      pagination.appendChild(ulTemp);
+     localStorage.setItem("currentPage", data.data.pagination.currentPage);
 
 }
 
@@ -253,3 +261,11 @@ function downloadReport(){
         console.log(err)
     });
 }
+
+
+document.getElementById("limitM").addEventListener('change',()=>{
+    let currentPAge=localStorage.getItem("currentPage");
+    expenseList.innerHTML='';
+    paginationFunc(currentPAge);
+    
+});
