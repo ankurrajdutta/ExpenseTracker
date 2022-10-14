@@ -1,6 +1,11 @@
 const express = require('express')
 const app = express()
 const path=require('path');
+const helmet = require("helmet");
+var morgan = require("morgan");
+const fs=require('fs')
+
+
 const bodyParser = require('body-parser');
 const sequelize=require('./utils/database')
 const user=require('./model/user');
@@ -16,7 +21,15 @@ const forgotPasswordRoutes=require('./router/forgotPassword');
 
 const dotenv = require('dotenv');
 dotenv.config();
+app.use(helmet());
 
+const logFiles=fs.createWriteStream(
+    path.join(__dirname,'access.log'),{
+        flags: 'a'
+    }
+)
+
+app.use(morgan('combined',{ stream:logFiles}))
 
 app.use(express.static(path.join(__dirname, '/public')))
 app.use(express.json());
