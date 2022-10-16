@@ -2,6 +2,10 @@ const express = require('express')
 const app = express()
 const path=require('path');
 const bodyParser = require('body-parser');
+const dotenv = require("dotenv");
+dotenv.config();
+
+
 const sequelize=require('./utils/database')
 const user=require('./model/user');
 const expense=require('./model/expense')
@@ -14,8 +18,6 @@ const expenseRoutes=require('./router/Expense')
 const purchaseRoutes=require('./router/purchase');
 const forgotPasswordRoutes=require('./router/forgotPassword');
 
-const dotenv = require('dotenv');
-dotenv.config();
 
 
 app.use(express.static(path.join(__dirname, '/public')))
