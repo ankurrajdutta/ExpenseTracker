@@ -7,7 +7,7 @@ document.getElementsByClassName("btn")[0].addEventListener("click", (e) => {
   let confirmPassword = document.getElementById("confirmPassword").value;
   if (newPassword === confirmPassword) {
     axios
-      .post(`http://localhost:3000/password/updatePassword/${id}`, {
+      .post(`http:// 34.217.123.175:3000/password/updatePassword/${id}`, {
         password: newPassword,
       })
       .then((result) => {
