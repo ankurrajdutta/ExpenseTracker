@@ -1,5 +1,6 @@
 const Razorpay = require('razorpay');
-const Order = require('../model/order')
+const Order = require('../model/order');
+const User=require('../model/user')
 
 
 const purchasepremium =async (req, res) => {
@@ -14,7 +15,10 @@ const purchasepremium =async (req, res) => {
             if(err) {
                 throw new Error(err);
             }
-            req.user.createOrder({ orderid: order.id, status: 'PENDING'}).then(() => {
+            req.user.order.orderid=order.id;
+            req.user.order.status="PENDING";
+            return req.user.save()
+            .then(() => {
                 return res.status(201).json({ order, key_id : rzp.key_id});
 
             }).catch(err => {
@@ -30,16 +34,21 @@ const purchasepremium =async (req, res) => {
  const updateTransactionStatus = (req, res ) => {
     try {
         const { payment_id, order_id} = req.body;
-        Order.findOne({where : {orderid : order_id}}).then(order => {
-            order.update({ paymentid: payment_id, status: 'SUCCESSFUL'}).then(() => {
-                req.user.update({isPremiumUser: true})
-                return res.status(202).json({sucess: true, message: "Transaction Successful"});
+        User.findOne({_id:req.user._id}).then(user=>{
+            user.order.paymentid=payment_id;
+            user.order.status='SUCCESSFUL';
+            return user.save();
+        }).then(user=>{
+            user.isPremiumUser=true;
+            return user.save();
+        })
+       .then(() => {
+               
+             return res.status(202).json({sucess: true, message: "Transaction Successful"});
             }).catch((err)=> {
                 throw new Error(err);
             })
-        }).catch(err => {
-            throw new Error(err);
-        })
+        
     } catch (err) {
         console.log(err);
         res.status(403).json({ errpr: err, message: 'Something went wrong' })

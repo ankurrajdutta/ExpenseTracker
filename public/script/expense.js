@@ -16,17 +16,21 @@ document.getElementsByClassName('btn')[1].addEventListener('click',(e)=>{
     console.log(obj)
     const token=localStorage.getItem('token')
     axios.post('http://localhost:3000/expense/AddExpense',obj,{headers:{"Authorization":token}}).then(result=>{
-        console.log('user added')
+        console.log('expense added')
         console.log(result)
         if(result.status==200)
         alert(`${result.data.message}`);
+        
         const obj1=result.data.obj;
+        
+       
         console.log(obj1)
         showExpenseinUI(obj1)
         
         
         
     }).catch(err=>{
+        console.log(err)
         if(err.response.status==401){
             alert(`${err.response.data.message}`);
         }
@@ -48,7 +52,7 @@ window.addEventListener('DOMContentLoaded',()=>{
             
             axios.get('http://localhost:3000/expense/getAllExpense').then(data=>{
         
-                
+                console.log(data)
                 let userList=data.data;
                 userList.sort(function(a,b){
                     return a.totalExpense-b.totalExpense
@@ -66,7 +70,7 @@ window.addEventListener('DOMContentLoaded',()=>{
         temp.forEach(ele=>{
             showExpenseinUI(ele);
         })
-        addPagination(data);
+        addPagination(data.data);
        
     }).catch(err=>console.log(err))
 })
@@ -88,7 +92,8 @@ function paginationFunc(pageNo){
           showExpenseinUI(ele);
         });
         document.getElementById("pagination").innerHTML = "";
-        addPagination(data);
+        addPagination(data.data);
+       
       })
       .catch((err) => {
         console.log(err);
@@ -101,32 +106,32 @@ function addPagination(data){
      ulTemp.setAttribute("class", "pagination d-flex justify-content-center");
 
      if (
-       data.data.pagination.currentPage !== 1 &&
-       data.data.pagination.previousPage !== 1
+       data.pagination.currentPage !== 1 &&
+       data.pagination.previousPage !== 1
      ) {
        ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${1})'>1</a></li>`;
      }
 
-     if (data.data.pagination.hasPreviousPage) {
-       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.previousPage})'>Prev</a></li>`;
+     if (data.pagination.hasPreviousPage) {
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.pagination.previousPage})'>Prev</a></li>`;
      }
 
      ulTemp.innerHTML += `
-        <li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.currentPage})'>${data.data.pagination.currentPage}</a></li>`;
+        <li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.pagination.currentPage})'>${data.pagination.currentPage}</a></li>`;
 
-     if (data.data.pagination.hasNextPage) {
-       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.nextPage})'>Next</a></li>`;
+     if (data.pagination.hasNextPage) {
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.pagination.nextPage})'>Next</a></li>`;
      }
 
      if (
-       data.data.pagination.lastPage !== data.data.pagination.currentPage &&
-       data.data.pagination.nextPage !== data.data.pagination.lastPage
+       data.pagination.lastPage !== data.pagination.currentPage &&
+       data.pagination.nextPage !== data.pagination.lastPage
      ) {
-       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.data.pagination.lastPage})'>Last</a></li>`;
+       ulTemp.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick='paginationFunc(${data.pagination.lastPage})'>Last</a></li>`;
      }
 
      pagination.appendChild(ulTemp);
-     localStorage.setItem("currentPage", data.data.pagination.currentPage);
+     localStorage.setItem("currentPage", data.pagination.currentPage);
 
 }
 
@@ -135,7 +140,7 @@ function showExpenseinUI(obj){
         var description=obj.description;
         var price=obj.money;
         var category=obj.category;
-        var id=obj.id
+        var id=obj._id
         
         
         var temp=document.createElement('div');
@@ -144,7 +149,7 @@ function showExpenseinUI(obj){
         temp.innerHTML=`<div class="p-2">${description}</div>
         <div class="p-2">${category}</div>
         <div class="p-2">${price}</div>
-        <button type="button" class="btn btn-danger" onclick='deleteExpense(${id})'>Remove</button>`;
+        <button type="button" class="btn btn-danger" onclick='deleteExpense("${id}")'>Remove</button>`;
         
         console.log(expenseList)
         expenseList.appendChild(temp);
@@ -153,9 +158,10 @@ function showExpenseinUI(obj){
 }
 
 function deleteExpense(id){
-    
+    console.log('deleteExpense clicked')
      axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`).then(result=>{
-         removeExpenseinUI(id)
+         removeExpenseinUI(id);
+         window.location.reload();
      }).catch(err=>console.log(err))
 }
 
@@ -214,10 +220,10 @@ function showUserinLeaderBoard(obj){
   
     let tbodyTable=document.getElementById('tbody-table');
     var leaderBoardtemp=document.createElement('tr');
-    leaderBoardtemp.innerHTML=`<th scope="row">${obj.id}</th>
+    leaderBoardtemp.innerHTML=`<th scope="row">${obj._id}</th>
                 <td>${obj.name}</td>
                 <td>${obj.totalExpense} 
-                <button type="button" class="btn btn-primary show-expense" onclick='showExpense(${obj.id})'>Show Expense</button>
+                <button type="button" class="btn btn-primary show-expense" onclick='showExpense("${obj._id}")'>Show Expense</button>
                 </td>`;
     tbodyTable.appendChild(leaderBoardtemp);
 }
@@ -227,6 +233,7 @@ function showExpense(id){
     document.getElementById('expense-board').innerHTML=''
     document.getElementById('expense-board').innerHTML='<h1>Expense Board</h1>'
     axios.get(`http://localhost:3000/expense/showExpense/${id}`).then(data=>{
+        console.log(data)
         let obj=data.data.data;
         obj.forEach(ele=>{
             showExpenseRow(ele)

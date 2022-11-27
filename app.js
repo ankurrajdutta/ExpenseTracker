@@ -1,14 +1,14 @@
 const express = require('express')
 const app = express()
 const path=require('path');
-const bodyParser = require('body-parser');
 const dotenv = require("dotenv");
+const mongoose=require('mongoose')
 dotenv.config();
 
 
-const sequelize=require('./utils/database')
+// const sequelize=require('./utils/database')
 const user=require('./model/user');
-const expense=require('./model/expense')
+
 const order=require('./model/order');
 const ForgotPassword=require('./model/forgotPasswordRequest')
 const FilesDownloaded=require('./model/filesDownloaded')
@@ -28,26 +28,28 @@ const filesDownloaded = require('./model/filesDownloaded');
 app.use('/',userRoutes)
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes);
-app.use('/password',forgotPasswordRoutes)
+// app.use('/password',forgotPasswordRoutes)
 
 
 
 
-user.hasMany(expense);
-expense.belongsTo(user);
+// user.hasMany(expense);
+// expense.belongsTo(user);
 
-user.hasMany(order);
-order.belongsTo(user)
-
-
-user.hasMany(ForgotPassword);
-ForgotPassword.belongsTo(user);
+// user.hasMany(order);
+// order.belongsTo(user)
 
 
-user.hasMany(filesDownloaded);
-filesDownloaded.belongsTo(user)
+// user.hasMany(ForgotPassword);
+// ForgotPassword.belongsTo(user);
 
-sequelize.sync()
+
+// user.hasMany(filesDownloaded);
+// filesDownloaded.belongsTo(user)
+
+ mongoose.connect(
+   "mongodb+srv://Ankur:f5heVMRr5lzQuOqs@cluster0.z6ddirp.mongodb.net/expense-tracker"
+ )
 .then(res=>app.listen(3000))
 .catch(err=>console.log(err))
 
